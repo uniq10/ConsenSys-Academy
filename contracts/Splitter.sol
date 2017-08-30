@@ -19,6 +19,7 @@ contract Splitter {
         address sender = msg.sender;
         require(balances[sender] > 0);
         sender.transfer(balances[sender]);
+        balances[sender] = 0;
         return true;
     }
 
