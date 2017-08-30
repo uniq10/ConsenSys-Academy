@@ -31,7 +31,7 @@ contract Splitter {
         uint amt = msg.value;
 
         if(amt%2 != 0) {
-            balances[owner] += 1;
+            balances[msg.sender] += 1;
             amt--;
         }
 
