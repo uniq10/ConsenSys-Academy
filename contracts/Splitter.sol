@@ -1,42 +1,36 @@
 pragma solidity ^0.4.6;
 
-contract Splitter {
+import {Owned} from './Owned.sol';
 
+contract Splitter is Owned{
     mapping(address => uint) public balances;
     bool public killed;
-    address public owner;
 
-    function Splitter() {
-        owner = msg.sender;
-    }
-
-    function kill() returns(bool) {
+    function kill() returns (bool) {
         require(msg.sender == owner);
         killed = true;
     }
 
-    function withdraw() returns(bool) {
-        address sender = msg.sender;
-        require(balances[sender] > 0);
-        sender.transfer(balances[sender]);
-        balances[sender] = 0;
+    function withdraw() returns (bool) {
+        require(balances[msg.sender] > 0);
+        balances[msg.sender] = 0;
+        msg.sender.transfer(balances[msg.sender]);
         return true;
     }
 
-    function sendMoney(address a1, address a2) payable returns(bool) {
+    function sendMoney(address a1, address a2) payable returns (bool) {
         require(!killed);
         require(a1 != 0 && a2 != 0);
-        require(amt > 0);
+        require(msg.value > 0);
 
-        uint amt = msg.value;
-
-        if(amt%2 != 0) {
+        uint amount = msg.value;
+        if(amount%2 != 0) {
             balances[msg.sender] += 1;
-            amt--;
+            amount--;
         }
 
-        balances[a1] += amt/2;
-        balances[a2] += amt/2;
+        balances[a1] += amount/2;
+        balances[a2] += amount/2;
 
         return true;
     }
